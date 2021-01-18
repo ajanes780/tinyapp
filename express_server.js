@@ -8,10 +8,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs"); // template engine
 
-const urlDatabase = {
+const  urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
   "Shorty": "https://www.ignitewebdesign.ca"
+  
 };
 
 
@@ -33,8 +34,16 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  
+  console.log(req.body );  // Log the POST request body to the console
+  
+  function addToObject(){
+    let stringID = generateRandomString()
+    return urlDatabase[stringID] = req.body.longUrl;
+      
+    }
+  
+    res.redirect(  req, '/urls/:shortURL' );      //  needs a call back ?
 });
 
 app.listen(PORT, () => {
@@ -43,8 +52,9 @@ app.listen(PORT, () => {
 
 
 function generateRandomString() {
-   const rando = Math.random().toString(20).substr(2, 6)
-console.log(rando);
-   return rando
+return Math.random().toString(20).substr(2, 6)
+
 }
-generateRandomString()
+
+//Example app listening on port 8080!
+{ longURL: 'www.cnn.ca' }
