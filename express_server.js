@@ -13,7 +13,7 @@ const urlDatabase = {
 
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.send(  "Hello and welcome to my server "      );
 });
 
 app.get("/urls", (req, res) => {
