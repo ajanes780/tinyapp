@@ -37,13 +37,13 @@ app.post("/urls", (req, res) => {
   
   console.log(req.body );  // Log the POST request body to the console
   
-  function addToObject(){
-    let stringID = generateRandomString()
-    return urlDatabase[stringID] = req.body.longUrl;
-      
-    }
+  // function addToObject(){
+    let shortURL = generateRandomString()
+    urlDatabase[shortURL] = req.body.longURL;
+    console.log( urlDatabase );
+    // }
   
-    res.redirect(  req, '/urls/:shortURL' );      //  needs a call back ?
+    res.redirect(  `/urls/${shortURL}`);      //  needs a call back ?
 });
 
 app.listen(PORT, () => {
@@ -55,6 +55,3 @@ function generateRandomString() {
 return Math.random().toString(20).substr(2, 6)
 
 }
-
-//Example app listening on port 8080!
-{ longURL: 'www.cnn.ca' }
