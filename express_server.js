@@ -34,41 +34,20 @@ app.get("/urls", (req, res) => {
 
 
 
-// app.use(function (req, res, next) {
-  
-// let  cookie = req.body
-//   // does this user exist ?
-//   if (cookie["username"][""] === undefined) {
-//     // no: set a new cookie
-//     res.cookie('cookieName', cookie);
-//     console.log('cookie created successfully');
-//   } else {
-//     // yes, cookie was already present 
-//     console.log('cookie exists', cookie);
-//   } 
-//   next(); // <-- important!
-// });
-
 
 app.post('/login',(req, res) => {
-  
   let username = req.body.username;
-  
-  
-  
-  
   res.cookie('username', username );
     console.log(username);
-
-
-
-
-
-
-
   res.redirect(`/urls`)
 })
 
+app.post('/logout',(req, res) => {
+  res.clearCookie('username' );
+
+res.redirect('/urls')
+
+});
 
 
 
