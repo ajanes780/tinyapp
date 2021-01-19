@@ -33,18 +33,20 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
 });
-app.post("/urls", (req, res) => {
-  
-  console.log(req.body );  // Log the POST request body to the console
-  
-  // function addToObject(){
-    let shortURL = generateRandomString()
-    urlDatabase[shortURL] = req.body.longURL;
-    console.log( urlDatabase );
-    // }
-  
-    res.redirect(  `/urls/${shortURL}`);      //  needs a call back ?
+// to delete a url  
+app.post("/urls/:shortURL/delete", (req, res) => {
+  console.log(urlDatabase[req.params.shortURL]);
+delete urlDatabase[req.params.shortURL] // uses the key to access 
+  res.redirect(`/urls`);      //  needs a call back ?
 });
+// to add a new shorty 
+app.post("/urls", (req, res) => {
+  let shortURL = generateRandomString()
+  urlDatabase[shortURL] = req.body.longURL;
+  res.redirect( `/urls/${shortURL}`);     
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
