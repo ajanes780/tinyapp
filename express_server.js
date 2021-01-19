@@ -53,7 +53,10 @@ res.redirect('/urls')
 
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new"); // form addition 
+  const templateVars= {
+    username: req.cookies['username'],
+  }   
+  res.render("urls_new",templateVars  ); // form addition 
 });
 // action of edit button in url_index page and the action of submit button in url_show page
 app.post(`/urls/:id`, (req, res) => {
@@ -69,7 +72,9 @@ app.post(`/urls/:id`, (req, res) => {
 
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  const templateVars = { shortURL: req.params.shortURL, 
+    longURL: urlDatabase[req.params.shortURL], 
+    username: req.cookies['username'] };
   res.render("urls_show", templateVars);
 });
 // to delete a url  
