@@ -29,11 +29,17 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   res.render("urls_new"); // form addition 
 });
-// edit function 
-app.post("/urls/:id", (req, res) => {
-  delete urlDatabase[req.params.shortURL]
-  res.redirect(`/urls/${req.params.id}`);
-});    
+// action of edit button in url_index page and the action of submit button in url_show page
+app.post(`/urls/:id`, (req, res) => {
+  // if the form in the url_show page contains an input(longURL) it will edit the long url and redirect you back to urls_index page
+  if (req.body.longURL) {
+    urlDatabase[req.params.id] = req.body.longURL
+    res.redirect(`/urls`)
+    // if no input was made in form it will just stay in the url_show page
+  } else {
+    res.redirect(`/urls/${req.params.id}`)
+  }
+})
 
 
 app.get("/urls/:shortURL", (req, res) => {
