@@ -29,6 +29,13 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   res.render("urls_new"); // form addition 
 });
+// edit function 
+app.post("/urls/:id", (req, res) => {
+  delete urlDatabase[req.params.shortURL]
+  res.redirect(`/urls/${req.params.id}`);
+});    
+
+
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
