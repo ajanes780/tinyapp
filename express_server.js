@@ -3,10 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 
 const bodyParser = require("body-parser"); // for post requests 
-app.use(bodyParser.urlencoded({extended: true}));
-
-
-app.set("view engine", "ejs"); // template engine
+const cookieParser = require('cookie-parser');
 
 const  urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -15,17 +12,67 @@ const  urlDatabase = {
   
 };
 
+app.use(bodyParser.urlencoded({extended: true}));
+app.set("view engine", "ejs"); // template engine
+app.use(cookieParser());
+
 
 
 
 app.get("/", (req, res) => {
-  res.send(  "Hello and welcome to my server "      );
+  res.send(  "Hello and welcome to my server ");
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = {
+    urls: urlDatabase,
+    username: req.cookies['username'],
+  
+  };
   res.render("urls_index", templateVars);
 });
+
+
+
+// app.use(function (req, res, next) {
+  
+// let  cookie = req.body
+//   // does this user exist ?
+//   if (cookie["username"][""] === undefined) {
+//     // no: set a new cookie
+//     res.cookie('cookieName', cookie);
+//     console.log('cookie created successfully');
+//   } else {
+//     // yes, cookie was already present 
+//     console.log('cookie exists', cookie);
+//   } 
+//   next(); // <-- important!
+// });
+
+
+app.post('/login',(req, res) => {
+  
+  let username = req.body.username;
+  
+  
+  
+  
+  res.cookie('username', username );
+    console.log(username);
+
+
+
+
+
+
+
+  res.redirect(`/urls`)
+})
+
+
+
+
+
 app.get("/urls/new", (req, res) => {
   res.render("urls_new"); // form addition 
 });
