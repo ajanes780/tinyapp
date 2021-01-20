@@ -35,10 +35,69 @@ const  urlDatabase = {
 
 
 
-app.get("/", (req, res) => {
-  res.send("Hello and welcome to my server ");
-// add few links to my pages here
+
+
+app.get('/register',(req, res) => {
+ // i dont have templateVars here as they are not defined yet 
+ const templateVars = {
+   email: null
+ }
+ 
+ 
+ res.render('reg', templateVars );
 });
+
+app.post('/register',(req, res) =>{
+  ;
+  // generate a random user id and store it in user object with data
+  if (req.body.email === "" || req.body.password === "" ) {
+    res.sendStatus(400)
+  }
+  let userExist = false;
+  for (const usersId in users) {
+    const usersInfo = users[usersId];
+    if (usersInfo.email === req.body.email) {
+        userExist = true;
+      }
+    }
+    if (!userExist) {
+      let randomID = generateRandomString()
+      users[randomID] = {
+        id: randomID,
+        email: req.body.email,
+        password: req.body.password
+      }
+      // setting a cookie for user_id and then directing user to urls page
+      res.cookie('user_id', users[randomID])
+      console.log(users[randomID]);
+      res.redirect("/urls")
+    }
+    res.sendStatus(400)
+  })
+
+
+
+
+  app.get('/login',(req, res) => {
+    // i dont have templateVars here as they are not defined yet 
+    const templateVars = {
+      email: null
+    }
+     res.render('login',templateVars );
+   });
+  
+ 
+   // login and log oput functions // how i set a cookie
+   app.post('/login',(req, res) => {
+     if (req.body.email === user[randomID])
+     
+     res.redirect(`/urls`);
+   });
+  
+  
+
+
+
 
 
 app.get("/urls", (req, res) => {
@@ -46,58 +105,21 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase,
     username: req.cookies['username'],
     email: req.cookies["user_id"]["email"]
-  
+    
   };
   res.render("urls_index", templateVars);
 });
 
 
-// building the new user registration page
-
-app.post('/register',(req, res) =>{
-  // generate a random user id and store it in user object with data
-  let randomID = generateRandomString();
-  
-  users[randomID] = {
-    id : randomID,
-    email: req.body.email,
-    password: req.body.password
-  };
-
-  res.cookie('user_id', users[randomID]);
-  // console.log(users[randomID]);
-  console.log( "this is req.cookies :",req.cookies["user_id"]["email"]);
-  res.redirect('/urls');
-
-
-});
-
-app.get('/register',(req, res) => {
-  const templateVars = {
-    urls: urlDatabase,
-    username: req.cookies['username'],
-    email: req.cookies["user_id"]["email"]
-  };
-  res.render('reg', templateVars);
-});
 
 
 
 
-
-// login and log oput functions // how i set a cookie
-app.post('/login',(req, res) => {
-  let username = req.body.username;
-  res.cookie('username', username);
-  console.log(username);
-  res.redirect(`/urls`);
-});
 
 app.post('/logout',(req, res) => {
-  res.clearCookie('email');
-
-  res.redirect('/urls');
-
+  res.clearCookie('user_id');
+  
+  res.redirect('/login');
 });
 
 
@@ -144,6 +166,10 @@ app.post("/urls", (req, res) => {
 });
 
 
+app.get("/", (req, res) => {
+  res.send("Hello and welcome to my server  ");
+  // add few links to my pages here
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
@@ -152,5 +178,5 @@ app.listen(PORT, () => {
 
 function generateRandomString() {
   return Math.random().toString(20).substr(2, 6);
-
+  
 }
