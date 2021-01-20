@@ -52,17 +52,23 @@ app.get("/urls", (req, res) => {
   };
   res.render("urls_index", templateVars);
 });
+
+
+// building the new user registration page 
+
 app.post('/register',(req, res ) =>{
-  console.log(req.body);
-  let randomeID = generateRandomString()
+  // console.log(req.body);
+  let randomID = generateRandomString();
+  users[randomID] = req.body;
+  console.log(users);
 
-users ={
-randomeID: req.body,
-};
+  res.redirect('/urls')
 
-console.log(users);
 
 });
+
+
+
 
 app.get('/register',(req, res) => {
 
@@ -77,7 +83,7 @@ app.get('/register',(req, res) => {
 
 
 
-
+// login and log oput functions 
 app.post('/login',(req, res) => {
   let username = req.body.username;
   res.cookie('username', username );
@@ -94,7 +100,7 @@ res.redirect('/urls')
 
 
 
-
+// get requests for urls_new
 app.get("/urls/new", (req, res) => {
   const templateVars= {
     username: req.cookies['username'],
