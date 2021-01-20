@@ -5,16 +5,37 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser"); // for post requests 
 const cookieParser = require('cookie-parser');
 
+app.use(bodyParser.urlencoded({extended: true}));
+app.set("view engine", "ejs"); // template engine
+app.use(cookieParser());
+
+
+
+let users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
+
+
+
+
+
+
 const  urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
   "Shorty": "https://www.ignitewebdesign.ca"
   
 };
-
-app.use(bodyParser.urlencoded({extended: true}));
-app.set("view engine", "ejs"); // template engine
-app.use(cookieParser());
 
 
 
@@ -31,6 +52,28 @@ app.get("/urls", (req, res) => {
   };
   res.render("urls_index", templateVars);
 });
+app.post('/register',(req, res ) =>{
+  console.log(req.body);
+  let randomeID = generateRandomString()
+
+users ={
+randomeID: req.body,
+};
+
+console.log(users);
+
+});
+
+app.get('/register',(req, res) => {
+
+ const templateVars = {
+    urls: urlDatabase,
+    username: req.cookies['username'],
+  }
+  res.render('reg', templateVars)
+});
+
+
 
 
 
