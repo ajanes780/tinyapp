@@ -25,24 +25,19 @@ let users = {
 };
 
 
-const  urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
-  "Shorty": "https://www.ignitewebdesign.ca"
-  
+const urlDatabase = {
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
-
-
-
 
 
 
 app.get('/register',(req, res) => {
  // i dont have templateVars here as they are not defined yet 
- const templateVars = {
+  const templateVars = {
   email: null
- }
- res.render('reg', templateVars );
+}
+  res.render('reg', templateVars );
 });
 
 app.post('/register',(req, res) =>{
@@ -72,8 +67,6 @@ app.post('/register',(req, res) =>{
   })
 
 
-
-
   app.get('/login',(req, res) => {
     // i dont have templateVars here as they are not defined yet 
     const templateVars = {
@@ -82,7 +75,6 @@ app.post('/register',(req, res) =>{
     res.render('login',templateVars );
   });
   
-
   //  login and log oput functions // how i set a cookie
   app.post('/login',(req, res) => {
     if (req.body.email === "" || req.body.password === "" ) {
@@ -94,28 +86,12 @@ app.post('/register',(req, res) =>{
     if (usersInfo.email === req.body.email && usersInfo.password === req.body.password) {
       userExist = true;
       res.cookie('user_id', users[usersId].id); 
-      console.log(users[usersId].id);
+      
       res.redirect('/urls')
     }
   } 
-  res.redirect(`/register`)
+  res.sendStatus(400)
 });   
-
-
-
-
-
-app.get("/urls", (req, res) => {
-  const templateVars = {
-    urls: urlDatabase,
-    username: req.cookies['username'],
-    email: users[req.cookies.user_id].email    
-  };
-  res.render("urls_index", templateVars);
-});
-
-
-
 
 app.post('/logout',(req, res) => {
   res.clearCookie('user_id');
@@ -124,12 +100,20 @@ app.post('/logout',(req, res) => {
 });
 
 
+app.get("/urls", (req, res) => {
+  const templateVars = {
+    urls: urlDatabase,
+    email: users[req.cookies.user_id].email    
+  };
+  res.render("urls_index", templateVars);
+});
+
 
 // get requests for urls_new
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    username: req.cookies['username'],
-    email: req.cookies["user_id"]["email"]
+    // urls: urlDatabase,
+    email: users[req.cookies.user_id].email    
   };
   res.render("urls_new",templateVars); // form addition
 });
@@ -144,26 +128,34 @@ app.post(`/urls/:id`, (req, res) => {
     res.redirect(`/urls/${req.params.id}`);
   }
 });
-
+// makes a short url
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies['username'],
-    email: req.cookies["user_id"]["email"]
+  const templateVars = { 
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL].longURL,
+    email:users[req.cookies.user_id].email 
   };
   res.render("urls_show", templateVars);
 });
 // to delete a url
 app.post("/urls/:shortURL/delete", (req, res) => {
   console.log(urlDatabase[req.params.shortURL]);
-  delete urlDatabase[req.params.shortURL]; // uses the key to access
-  res.redirect(`/urls`);      //  needs a call back ?
+  delete urlDatabase[req.params.shortURL]; 
+  res.redirect(`/urls`);     
 });
 // to add a new shorty
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`);
+});
+app.get("/u/:shortURL", (req, res) => {
+  if (!urlDatabase[req.params.shortURL]) {
+    res.sendStatus(404)
+  } else {
+    const longURL = urlDatabase[req.params.shortURL].longURL
+    res.redirect(longURL);
+  }
 });
 
 
