@@ -100,22 +100,32 @@ app.post('/logout',(req, res) => {
 });
 
 
-app.get("/urls", (req, res) => {
+
+
+app.get("/urls", function (req, res) {
+ 
+  if (req.cookies['user_id'] === undefined) {
+    res.status(400).send("Access Denied. Please Login or Register!")
+  }
   const templateVars = {
     urls: urlDatabase,
-    email: users[req.cookies.user_id].email    
-  };
-  res.render("urls_index", templateVars);
-});
+    email: users[req.cookies['user_id']].email
+  }
+  res.render("urls_index", templateVars)
+})
 
 
 // get requests for urls_new
 app.get("/urls/new", (req, res) => {
+ 
+  if (req.cookies['user_id'] === undefined) {
+    res.status(400).send("Access Denied. Please Login or Register!")
+  }
   const templateVars = {
-    // urls: urlDatabase,
-    email: users[req.cookies.user_id].email    
-  };
-  res.render("urls_new",templateVars); // form addition
+    urls: urlDatabase,
+    email: users[req.cookies['user_id']].email
+  }
+  res.render("urls_index", templateVars)
 });
 // action of edit button in url_index page and the action of submit button in url_show page
 app.post(`/urls/:id`, (req, res) => {
