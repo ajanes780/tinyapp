@@ -32,6 +32,18 @@ const urlDatabase = {
 
 
 
+const urlsForUser = function (id) {
+  const userUrls = {};
+  for (const shortURL in urlDatabase) {
+    const urlInfoObj = urlDatabase[shortURL];
+    if (urlInfoObj.userID === id) {
+      userUrls[shortURL] = urlInfoObj
+    }
+  }
+  return userUrls
+}
+
+
 app.get('/register',(req, res) => {
  // i dont have templateVars here as they are not defined yet 
   const templateVars = {
@@ -103,7 +115,7 @@ app.post('/logout',(req, res) => {
 
 
 app.get("/urls", function (req, res) {
- 
+  
   if (req.cookies['user_id'] === undefined) {
     res.status(400).send("Access Denied. Please Login or Register!")
   }
@@ -114,30 +126,29 @@ app.get("/urls", function (req, res) {
   res.render("urls_index", templateVars)
 })
 
-
 // get requests for urls_new
 app.get("/urls/new", (req, res) => {
- 
   if (req.cookies['user_id'] === undefined) {
     res.status(400).send("Access Denied. Please Login or Register!")
   }
   const templateVars = {
-    urls: urlDatabase,
-    email: users[req.cookies['user_id']].email
+      email: users[req.cookies['user_id']].email
   }
-  res.render("urls_index", templateVars)
+  res.render("urls_new", templateVars)
 });
 // action of edit button in url_index page and the action of submit button in url_show page
 app.post(`/urls/:id`, (req, res) => {
-  // if the form in the url_show page contains an input(longURL) it will edit the long url and redirect you back to urls_index page
   if (req.body.longURL) {
-    urlDatabase[req.params.id] = req.body.longURL;
-    res.redirect(`/urls`);
-    // if no input was made in form it will just stay in the url_show page
+    const userUrls = urlsForUser(req.cookies['user_id'])
+    if (Object.keys(userUrls).includes(req.params.id)) {
+      const shortURL = req.params.id;
+      urlDatabase[shortURL].longURL = req.body.newURL
+      res.redirect(`/urls`)
+    }
   } else {
-    res.redirect(`/urls/${req.params.id}`);
+    res.status(401).send(`You cant do that.`)
   }
-});
+})
 // makes a short url
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { 
@@ -149,16 +160,23 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 // to delete a url
 app.post("/urls/:shortURL/delete", (req, res) => {
-  console.log(urlDatabase[req.params.shortURL]);
-  delete urlDatabase[req.params.shortURL]; 
-  res.redirect(`/urls`);     
-});
+
+  const userUrls = urlsForUser(req.cookies["user_id"])
+  if (Object.keys(userUrls).includes(req.params.shortURL)){
+  const shortURL =req.params.shortURL;
+  delete urlDatabase[shortURL]
+  res.redirect('/urls')
+  }else {
+    res.status(401).send(" You cant do that ")
+  }
+})
 // to add a new shorty
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`);
 });
+
 app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
     res.sendStatus(404)
