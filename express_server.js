@@ -40,15 +40,12 @@ const  urlDatabase = {
 app.get('/register',(req, res) => {
  // i dont have templateVars here as they are not defined yet 
  const templateVars = {
-   email: null
+  email: null
  }
- 
- 
  res.render('reg', templateVars );
 });
 
 app.post('/register',(req, res) =>{
-  ;
   // generate a random user id and store it in user object with data
   if (req.body.email === "" || req.body.password === "" ) {
     res.sendStatus(400)
@@ -68,8 +65,7 @@ app.post('/register',(req, res) =>{
         password: req.body.password
       }
       // setting a cookie for user_id and then directing user to urls page
-      res.cookie('user_id', users[randomID])
-      console.log(users[randomID]);
+      res.cookie('user_id', randomID)
       res.redirect("/urls")
     }
     res.sendStatus(400)
@@ -83,18 +79,27 @@ app.post('/register',(req, res) =>{
     const templateVars = {
       email: null
     }
-     res.render('login',templateVars );
-   });
+    res.render('login',templateVars );
+  });
   
- 
-   // login and log oput functions // how i set a cookie
-   app.post('/login',(req, res) => {
-     if (req.body.email === user[randomID])
-     
-     res.redirect(`/urls`);
-   });
-  
-  
+
+  //  login and log oput functions // how i set a cookie
+  app.post('/login',(req, res) => {
+    if (req.body.email === "" || req.body.password === "" ) {
+    res.sendStatus(400);
+  }
+  let userExist = false;
+  for (const usersId in users) {
+    const usersInfo = users[usersId];
+    if (usersInfo.email === req.body.email && usersInfo.password === req.body.password) {
+      userExist = true;
+      res.cookie('user_id', users[usersId].id); 
+      console.log(users[usersId].id);
+      res.redirect('/urls')
+    }
+  } 
+  res.redirect(`/register`)
+});   
 
 
 
@@ -104,14 +109,10 @@ app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     username: req.cookies['username'],
-    email: req.cookies["user_id"]["email"]
-    
+    email: users[req.cookies.user_id].email    
   };
   res.render("urls_index", templateVars);
 });
-
-
-
 
 
 
