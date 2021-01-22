@@ -29,7 +29,7 @@ const urlDatabase = {};
 
 
 
-// routes 
+// routes //
 
 app.get('/register',(req, res) => {
   const templateVars = {
