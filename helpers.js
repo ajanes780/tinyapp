@@ -17,10 +17,29 @@ function generateRandomString() {
   
 }
 
+const database ={
+  texas: "aaron@aa.com",
+  dob : 12/23/44,
+  email: "aaron@gmail.com",
+  dog: " big"
+};
 
+email ="aaron@gmail.com" 
+
+const getUserByEmail = function(email, database) {
+  for (const key in database) {
+    if (email === database[key]){
+      console.log("this worked  ");
+  } else {
+      console.log(" this failed");
+    }
+
+}
+
+}
+getUserByEmail(email, database)
 
 module.exports = {
   generateRandomString,
-  urlsForUser,
-  
+ 
 };
