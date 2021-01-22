@@ -3,7 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bcrypt = require('bcrypt');
 const bodyParser = require("body-parser"); // for post requests
-const { generateRandomString, getUserByEmail} = require(`./helpers`);
+const { generateRandomString, getUserByEmail, urlsForUser} = require(`./helpers`);
 const cookieSession = require('cookie-session');
 const morgan = require('morgan');
 
@@ -25,16 +25,7 @@ let users = {};
 const urlDatabase = {};
 
 
-const urlsForUser = function (id) {
-  const userUrls = {};
-  for (const shortURL in urlDatabase) {
-    const urlInfoObj = urlDatabase[shortURL];
-    if (urlInfoObj.userID === id) {
-      userUrls[shortURL] = urlInfoObj
-    }
-  }
-  return userUrls
-}
+
 
 
 
@@ -87,7 +78,7 @@ app.get('/login',(req, res) => {
   res.render('login',templateVars);
 });
   
-//  login and log oput functions // how i set a cookie
+//  login and log out functions 
 app.post('/login',(req, res) => {
   const userPassword = req.body.password;
   const userEmail = req.body.email;
@@ -116,7 +107,7 @@ app.get("/urls", function(req, res) {
     res.status(400).send("Access Denied. Please Login or Register!");
   }
   const templateVars = {
-    urls: urlsForUser(req.session.user_id),
+    urls: urlsForUser(req.session.user_id, urlDatabase),
     email: users[req.session.user_id].email
   };
   res.render("urls_index", templateVars);
@@ -133,7 +124,7 @@ app.get("/urls/new", (req, res) => {
 });
 // action of edit button in url_index page and the action of submit button in url_show page
 app.post(`/urls/:id`, (req, res) => {
-  const userUrls = urlsForUser(req.session['user_id']);
+  const userUrls = urlsForUser(req.session['user_id'], urlDatabase);
   if (Object.keys(userUrls).includes(req.params.id)) {
     const shortURL = req.params.id;
     return res.redirect(`/urls/:shortURL`);
