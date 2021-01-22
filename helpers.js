@@ -1,5 +1,5 @@
 
-const urlsForUser = function (id) {
+const urlsForUser = function (id, urlDatabase) {
   const userUrls = {};
   for (const shortURL in urlDatabase) {
     const urlInfoObj = urlDatabase[shortURL];
