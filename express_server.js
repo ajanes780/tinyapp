@@ -14,7 +14,7 @@ app.set("view engine", "ejs"); // template engine
 app.use(morgan('dev'));
 
 app.use(cookieSession({
-  name: 'session', 
+  name: 'session',
   keys: [ 'Aaron'],
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
@@ -29,7 +29,7 @@ const urlDatabase = {};
 
 
 
-// routes 
+// routes //
 
 app.get('/register',(req, res) => {
   const templateVars = {
@@ -61,7 +61,7 @@ app.post('/register',(req, res) =>{
         password: userHashPw
       };
     }
-    req.session.user_id = users[randomID] ;
+    req.session.user_id = users[randomID];
     res.redirect("/login");
     return;   // setting a cookie for user_id and then directing user to urls page
   }
@@ -78,7 +78,7 @@ app.get('/login',(req, res) => {
   res.render('login',templateVars);
 });
   
-//  login and log out functions 
+//  login and log out functions
 app.post('/login',(req, res) => {
   const userPassword = req.body.password;
   const userEmail = req.body.email;
@@ -114,7 +114,7 @@ app.get("/urls", function(req, res) {
 });
 // get requests for urls_new
 app.get("/urls/new", (req, res) => {
-  if (req.session === undefined) {
+  if (req.session.user_id === undefined) {
     return  res.status(400).send("Access Denied. Please Login or Register!");
   }
   const templateVars = {
@@ -130,7 +130,7 @@ app.post(`/urls/:id`, (req, res) => {
     return res.redirect(`/urls/:shortURL`);
   } else {
     return res.status(401).send(`You cant do that.`);
-  } 
+  }
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -144,20 +144,20 @@ app.get("/urls/:shortURL", (req, res) => {
 
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  const userId = urlDatabase[req.params.shortURL].userID
+  const userId = urlDatabase[req.params.shortURL].userID;
   const shortUrl = req.params.shortURL;
-  if (userId === urlDatabase[shortUrl].userID   ){
+  if (userId === urlDatabase[shortUrl].userID) {
     delete urlDatabase[req.params.shortURL];
     res.redirect(`/urls`);
-  } else{
+  } else {
     res.status(401).send(" You cant do that ");
   }
 });
 // to add a new shorty
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
-  let longURL = req.body.longURL
-  let newUserId = req.session.user_id
+  let longURL = req.body.longURL;
+  let newUserId = req.session.user_id;
   urlDatabase[shortURL] = { longURL,  userID: newUserId };
   res.redirect(`/urls/${shortURL}`);
 });
