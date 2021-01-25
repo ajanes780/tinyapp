@@ -149,7 +149,7 @@ app.get("/urls/:shortURL", (req, res) => {
   };
   return res.render("urls_show", templateVars);
 });
-
+// to delete urls
 app.post("/urls/:shortURL/delete", (req, res) => {
   const userId = urlDatabase[req.params.shortURL].userID;
   const shortUrl = req.params.shortURL;
