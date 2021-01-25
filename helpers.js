@@ -3,7 +3,7 @@ const urlsForUser = function (id, urlDatabase) {
   const userUrls = {};
   for (const shortURL in urlDatabase) {
     const urlInfoObj = urlDatabase[shortURL];
-    if (urlInfoObj.userID === id) {
+    if (urlInfoObj.userID.id === id) {
       userUrls[shortURL] = urlInfoObj;
     }
   }
