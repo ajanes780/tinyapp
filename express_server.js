@@ -111,7 +111,6 @@ app.get("/urls", function (req, res) {
     urls: urlsForUser(req.session.user_id.id, urlDatabase),
     email: req.session.user_id.email,
   };
-  console.log("req.session.user_id", req.session.user_id.id);
 
   res.render("urls_index", templateVars);
 });
@@ -173,7 +172,6 @@ app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   let newUserId = req.session.user_id.id;
   urlDatabase[shortURL] = { longURL, userID: newUserId };
-  console.log(" this is urlDatabase when i make the url ", urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
