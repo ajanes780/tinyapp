@@ -128,11 +128,17 @@ app.get("/urls/new", (req, res) => {
 });
 
 // action of edit button in url_index page and the action of submit button in url_show page
-app.post(`/urls/:id`, (req, res) => {
-  const userUrls = urlsForUser(req.session["user_id"], urlDatabase);
-  if (Object.keys(userUrls).includes(req.params.id)) {
-    const shortURL = req.params.id;
-    return res.redirect(`/urls/:shortURL`);
+app.post(`/urls/:shortURL`, (req, res) => {
+  const userUrls = urlsForUser(req.session.user_id.id, urlDatabase);
+  const val = urlDatabase[req.params.shortURL];
+
+  if (req.session.user_id.id === val.userID) {
+    urlDatabase[req.params.shortURL] = {
+      longURL: req.body.longURL,
+      userID: req.session.user_id.id,
+    };
+
+    return res.redirect(`/urls`);
   } else {
     return res.status(401).send(`You cant do that.`);
   }
@@ -165,12 +171,9 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let longURL = req.body.longURL;
-  let newUserId = req.session.user_id;
+  let newUserId = req.session.user_id.id;
   urlDatabase[shortURL] = { longURL, userID: newUserId };
-  console.log(
-    " this is urlDatabase when i make the url ",
-    urlDatabase[shortURL]
-  );
+  console.log(" this is urlDatabase when i make the url ", urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
